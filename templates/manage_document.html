@@ -1,0 +1,76 @@
+{% extends "after_login_template.html" %}
+{% block title %}INDEX{% endblock %}
+{% block inner_content %}
+    <div class="container-fluid">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert {{ category['class']}} alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><strong>{{ category['header'] }}</strong> {{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+      <!-- Breadcrumbs-->
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="#">Documents</a>
+        </li>
+        <li class="breadcrumb-item active">My Documents</li>
+      </ol>
+    <p>This is a simple project where you can manage your documents</p>
+    {% if documents.count()>0 %}
+      <!-- Example DataTables Card-->
+      <div class="card mb-3">
+        <div class="card-header">
+          <i class="fa fa-table"></i> Documents Table </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+              <thead>
+                <tr>
+                  <th>DocType</th>
+                  <th>Number</th>
+                  <th>Edit</th>
+                  <th>Delete</th>
+                </tr>
+              </thead>
+              <tfoot>
+                <tr>
+                  <th>DocType</th>
+                  <th>Number</th>
+                  <th>Edit</th>
+                  <th>Delete</th>
+                </tr>
+              </tfoot>
+              <tbody>
+                {% for document in documents %}
+                    <tr>
+                        <td>{{document['DocType']}}</td>
+                        <td>
+                            {% if document['DocType']=='Driving Licence'%}
+                                {{document['DLNumber']}}
+                            {% elif document['DocType']=='Aadhar Card'%}
+                                {{document['AANumber']}}
+                            {% elif document['DocType']=='Debit Card'%}
+                                {{document['DCNumber']}}
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <form action="{{ url_for('edit_document') }}" method="POST"><button class="btn btn-warning" name="edit" type="submit" value="{{document['_id']}}" ><i class="fa fa-edit"></i></button></form>
+                        </td>
+                        <td>
+                            <form action="" method="POST"><button class="btn btn-danger" name="delete" type="submit" value="{{document['_id']}}"><i class="fa fa-trash"></i></button></form>
+                        </td>
+                    </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    {% else %}
+    <p>You don't have any documents.</p>
+    <p>Click <a href="{{ url_for('add_document') }}"> Add Documents</a> in the navigation panel.</p>
+    {% endif %}
+    </div>
+{% endblock %}
